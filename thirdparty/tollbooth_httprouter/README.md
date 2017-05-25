@@ -12,8 +12,8 @@ import (
     "time"
     "log"
 
-    "github.com/didip/tollbooth"
-    "github.com/didip/tollbooth/thirdparty/tollbooth_httprouter"
+    "github.com/wallstreetcn/tollbooth"
+    "github.com/wallstreetcn/tollbooth/thirdparty/tollbooth_httprouter"
     "github.com/julienschmidt/httprouter"
 )
 

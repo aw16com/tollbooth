@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/didip/tollbooth/config"
-	"github.com/didip/tollbooth/errors"
-	"github.com/didip/tollbooth/libstring"
+	"github.com/wallstreetcn/tollbooth/config"
+	"github.com/wallstreetcn/tollbooth/errors"
+	"github.com/wallstreetcn/tollbooth/libstring"
 )
 
 // NewLimiter is a convenience function to config.NewLimiter.
@@ -151,7 +151,7 @@ func LimitHandler(limiter *config.Limiter, next http.Handler) http.Handler {
 
 		httpError := LimitByRequest(limiter, r)
 		if httpError != nil {
-			w.Header().Add("Content-Type", limiter.MessageContentType)
+			// w.Header().Add("Content-Type", limiter.MessageContentType)
 			w.WriteHeader(httpError.StatusCode)
 			w.Write([]byte(httpError.Message))
 			return

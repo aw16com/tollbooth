@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/didip/tollbooth/config"
+	"github.com/wallstreetcn/tollbooth/config"
 )
 
 func TestLimitByKeys(t *testing.T) {
@@ -285,15 +285,13 @@ func TestLimitHandler(t *testing.T) {
 	req.Header.Set("X-Real-IP", "2601:7:1c82:4097:59a0:a80b:2841:b8c8")
 
 	rr := httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+	// Should not be limited
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
 
-	go func() {
-		handler.ServeHTTP(rr, req)
-		// Should not be limited
-		if status := rr.Code; status != http.StatusOK {
-			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
-		}
-	}()
-
+	rr = httptest.NewRecorder()
 	handler.ServeHTTP(rr, req)
 	//Should be limited
 	if status := rr.Code; status != http.StatusTooManyRequests {

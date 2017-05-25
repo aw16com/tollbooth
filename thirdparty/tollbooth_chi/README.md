@@ -9,8 +9,8 @@
 package main
 
 import (
-    "github.com/didip/tollbooth"
-    "github.com/didip/tollbooth/thirdparty/tollbooth_chi"
+    "github.com/wallstreetcn/tollbooth"
+    "github.com/wallstreetcn/tollbooth/thirdparty/tollbooth_chi"
     "github.com/pressly/chi"
     "net/http"
     "time"

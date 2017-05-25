@@ -1,8 +1,8 @@
 package tollbooth_gorestful
 
 import (
-	"github.com/didip/tollbooth"
-	"github.com/didip/tollbooth/config"
+	"github.com/wallstreetcn/tollbooth"
+	"github.com/wallstreetcn/tollbooth/config"
 	"github.com/emicklei/go-restful"
 )
 

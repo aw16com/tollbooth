@@ -11,7 +11,7 @@ package main
 import (
 	"time"
 
-	"github.com/didip/tollbooth"
+	"github.com/wallstreetcn/tollbooth"
 	"github.com/magicwrighter/tollbooth/thirdparty/tollbooth_fasthttp"
 	"github.com/valyala/fasthttp"
 )

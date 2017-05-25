@@ -4,10 +4,10 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/didip/tollbooth"
-	"github.com/didip/tollbooth/config"
-	"github.com/didip/tollbooth/errors"
 	"github.com/valyala/fasthttp"
+	"github.com/wallstreetcn/tollbooth"
+	"github.com/wallstreetcn/tollbooth/config"
+	"github.com/wallstreetcn/tollbooth/errors"
 )
 
 func LimitHandler(handler fasthttp.RequestHandler, limiter *config.Limiter) fasthttp.RequestHandler {

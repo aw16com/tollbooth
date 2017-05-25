@@ -10,8 +10,8 @@ Import package `thirdparty/tollbooth_gorestful` and use `tollbooth_gorestful.Lim
 package resources
 
 import (
-	"github.com/didip/tollbooth"
-	"github.com/didip/tollbooth/thirdparty/tollbooth_gorestful"
+	"github.com/wallstreetcn/tollbooth"
+	"github.com/wallstreetcn/tollbooth/thirdparty/tollbooth_gorestful"
 	"github.com/emicklei/go-restful"
 )
 

@@ -11,8 +11,8 @@ package main
 import (
 	"time"
 
-	"github.com/didip/tollbooth/thirdparty/tollbooth_echo"
-	"github.com/didip/tollbooth"
+	"github.com/wallstreetcn/tollbooth/thirdparty/tollbooth_echo"
+	"github.com/wallstreetcn/tollbooth"
 	"github.com/webx-top/echo"
 	"github.com/webx-top/echo/engine/standard"
 )

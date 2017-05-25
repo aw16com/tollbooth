@@ -9,8 +9,8 @@
 package main
 
 import (
-    "github.com/didip/tollbooth"
-    "github.com/didip/tollbooth/thirdparty/tollbooth_gin"
+    "github.com/wallstreetcn/tollbooth"
+    "github.com/wallstreetcn/tollbooth/thirdparty/tollbooth_gin"
     "github.com/gin-gonic/gin"
     "time"
 )

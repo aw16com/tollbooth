@@ -1,10 +1,11 @@
 package tollbooth_negroni
 
 import (
-	"github.com/urfave/negroni"
-	"github.com/didip/tollbooth"
-	"github.com/didip/tollbooth/config"
 	"net/http"
+
+	"github.com/urfave/negroni"
+	"github.com/wallstreetcn/tollbooth"
+	"github.com/wallstreetcn/tollbooth/config"
 )
 
 func LimitHandler(limiter *config.Limiter) negroni.HandlerFunc {
@@ -13,7 +14,7 @@ func LimitHandler(limiter *config.Limiter) negroni.HandlerFunc {
 		if httpError != nil {
 			w.Header().Add("Content-Type", limiter.MessageContentType)
 			/* RHMOD Fix for error "http: multiple response.WriteHeader calls"
-			     Reverse the sequence of the functions calls w.WriteHeader() and w.Write()
+			   Reverse the sequence of the functions calls w.WriteHeader() and w.Write()
 			*/
 			w.WriteHeader(httpError.StatusCode)
 			w.Write([]byte(httpError.Message))

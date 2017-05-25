@@ -3,9 +3,9 @@ package tollbooth_httprouter
 import (
 	"net/http"
 
-	"github.com/didip/tollbooth"
-	"github.com/didip/tollbooth/config"
 	"github.com/julienschmidt/httprouter"
+	"github.com/wallstreetcn/tollbooth"
+	"github.com/wallstreetcn/tollbooth/config"
 )
 
 // RateLimit is a rate limiting middleware

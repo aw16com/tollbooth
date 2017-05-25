@@ -1,9 +1,9 @@
 package tollbooth_gin
 
 import (
-	"github.com/didip/tollbooth"
-	"github.com/didip/tollbooth/config"
 	"github.com/gin-gonic/gin"
+	"github.com/wallstreetcn/tollbooth"
+	"github.com/wallstreetcn/tollbooth/config"
 )
 
 func LimitHandler(limiter *config.Limiter) gin.HandlerFunc {
