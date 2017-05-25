@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/wallstreetcn/tollbooth.png?branch=master)](https://travis-ci.org/wallstreetcn/tollbooth)
 [![GoDoc](https://godoc.org/github.com/wallstreetcn/tollbooth?status.svg)](http://godoc.org/github.com/wallstreetcn/tollbooth)
+[![Coverage Status](https://coveralls.io/repos/github/wallstreetcn/tollbooth/badge.svg?branch=master)](https://coveralls.io/github/wallstreetcn/tollbooth?branch=master)
 [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/wallstreetcn/tollbooth/master/LICENSE)
 
 ## Tollbooth
