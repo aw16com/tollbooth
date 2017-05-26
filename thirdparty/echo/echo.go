@@ -26,6 +26,11 @@ func LimitMiddleware(limiter *config.Limiter) echo.MiddlewareFunc {
 	}
 }
 
+// LimitHandler builds an API limit handler.
+func LimitHandler(limiter *config.Limiter) echo.MiddlewareFunc {
+	return LimitMiddleware(limiter)
+}
+
 // LimitByRequest builds keys based on http.Request struct,
 // loops through all the keys, and check if any one of them returns HTTPError.
 func LimitByRequest(limiter *config.Limiter, r *http.Request) *errors.HTTPError {
@@ -123,7 +128,7 @@ func BuildKeys(limiter *config.Limiter, r *http.Request) [][]string {
 			for headerKey, headerValues := range limiter.Headers {
 				if (headerValues == nil || len(headerValues) <= 0) && r.Header.Get(headerKey) != "" {
 					// If header values are empty, rate-limit all request with headerKey.
-					sliceKeys = append(sliceKeys, []string{remoteIP, path, r.Method, headerKey})
+					sliceKeys = append(sliceKeys, []string{remoteIP, path, r.Method, headerKey, r.Header.Get(headerKey)})
 				} else if len(headerValues) > 0 && r.Header.Get(headerKey) != "" {
 					// If header values are not empty, rate-limit all request with headerKey and headerValues.
 					for _, headerValue := range headerValues {
