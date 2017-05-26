@@ -48,7 +48,7 @@ type Limiter struct {
 
 	// List of HTTP headers to limit.
 	// Empty means skip headers checking.
-	Headers map[string][]string
+	Headers []string
 
 	// List of basic auth usernames to limit.
 	BasicAuthUsers []string

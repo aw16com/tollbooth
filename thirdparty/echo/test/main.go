@@ -13,6 +13,10 @@ func main() {
 
 	// Create a limiter struct.
 	limiter := tollbooth.NewLimiter(1, time.Second)
+	limiter.Methods = []string{"GET", "POST"}
+	limiter.Headers = []string{
+		"x-auth-token",
+	}
 
 	e.GET("/", echo.HandlerFunc(func(c echo.Context) error {
 		return c.String(200, "Hello, World!")

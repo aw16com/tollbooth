@@ -91,8 +91,7 @@ func TestBasicAuthBuildKeys(t *testing.T) {
 
 func TestCustomHeadersBuildKeys(t *testing.T) {
 	limiter := NewLimiter(1, time.Second)
-	limiter.Headers = make(map[string][]string)
-	limiter.Headers["X-Auth-Token"] = []string{"totally-top-secret", "another-secret"}
+	limiter.Headers = []string{"X-Auth-Token"}
 
 	request, err := http.NewRequest("GET", "/", strings.NewReader("Hello, world!"))
 	if err != nil {
@@ -116,7 +115,7 @@ func TestCustomHeadersBuildKeys(t *testing.T) {
 			if i == 2 && keyChunk != "X-Auth-Token" {
 				t.Errorf("The (%v) chunk should be request header. KeyChunk: %v", i+1, keyChunk)
 			}
-			if i == 3 && (keyChunk != "totally-top-secret" && keyChunk != "another-secret") {
+			if i == 3 && keyChunk != "totally-top-secret" {
 				t.Errorf("The (%v) chunk should be request path. KeyChunk: %v", i+1, keyChunk)
 			}
 		}
@@ -155,8 +154,7 @@ func TestRequestMethodBuildKeys(t *testing.T) {
 func TestRequestMethodAndCustomHeadersBuildKeys(t *testing.T) {
 	limiter := NewLimiter(1, time.Second)
 	limiter.Methods = []string{"GET"}
-	limiter.Headers = make(map[string][]string)
-	limiter.Headers["X-Auth-Token"] = []string{"totally-top-secret", "another-secret"}
+	limiter.Headers = []string{"X-Auth-Token"}
 
 	request, err := http.NewRequest("GET", "/", strings.NewReader("Hello, world!"))
 	if err != nil {
@@ -183,7 +181,7 @@ func TestRequestMethodAndCustomHeadersBuildKeys(t *testing.T) {
 			if i == 3 && keyChunk != "X-Auth-Token" {
 				t.Errorf("The (%v) chunk should be request header. KeyChunk: %v", i+1, keyChunk)
 			}
-			if i == 4 && (keyChunk != "totally-top-secret" && keyChunk != "another-secret") {
+			if i == 4 && keyChunk != "totally-top-secret" {
 				t.Errorf("The (%v) chunk should be request path. KeyChunk: %v", i+1, keyChunk)
 			}
 		}
@@ -227,8 +225,7 @@ func TestRequestMethodAndBasicAuthUsersBuildKeys(t *testing.T) {
 func TestRequestMethodCustomHeadersAndBasicAuthUsersBuildKeys(t *testing.T) {
 	limiter := NewLimiter(1, time.Second)
 	limiter.Methods = []string{"GET"}
-	limiter.Headers = make(map[string][]string)
-	limiter.Headers["X-Auth-Token"] = []string{"totally-top-secret", "another-secret"}
+	limiter.Headers = []string{"X-Auth-Token"}
 	limiter.BasicAuthUsers = []string{"bro"}
 
 	request, err := http.NewRequest("GET", "/", strings.NewReader("Hello, world!"))
@@ -257,7 +254,7 @@ func TestRequestMethodCustomHeadersAndBasicAuthUsersBuildKeys(t *testing.T) {
 			if i == 3 && keyChunk != "X-Auth-Token" {
 				t.Errorf("The (%v) chunk should be request header. KeyChunk: %v", i+1, keyChunk)
 			}
-			if i == 4 && (keyChunk != "totally-top-secret" && keyChunk != "another-secret") {
+			if i == 4 && keyChunk != "totally-top-secret" {
 				t.Errorf("The (%v) chunk should be request path. KeyChunk: %v", i+1, keyChunk)
 			}
 			if i == 5 && keyChunk != "bro" {
