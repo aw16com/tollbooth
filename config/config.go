@@ -2,6 +2,7 @@
 package config
 
 import (
+	"sort"
 	"sync"
 	"time"
 
@@ -56,9 +57,42 @@ type Limiter struct {
 	// Throttler struct
 	tokenBuckets map[string]*rate.Limiter
 
-	settings map[LimitKey]LimitValue
-
 	sync.RWMutex
+}
+
+// By is the type of a "less" function that defines the ordering of its RateLimit arguments.
+type By func(l1, l2 *RateLimit) bool
+
+// Sort sorts the rate limits by specified order.
+func (by By) Sort(limits []RateLimit) {
+	ls := &limitSorter{
+		limits: limits,
+		by:     by,
+	}
+	sort.Sort(ls)
+}
+
+type limitSorter struct {
+	limits []RateLimit
+	by     func(l1, l2 *RateLimit) bool
+}
+
+func (s *limitSorter) Len() int {
+	return len(s.limits)
+}
+
+func (s *limitSorter) Swap(i, j int) {
+	s.limits[i], s.limits[j] = s.limits[j], s.limits[i]
+}
+
+func (s *limitSorter) Less(i, j int) bool {
+	return s.by(&s.limits[i], &s.limits[j])
+}
+
+// RateLimit defines the API's rate limit.
+type RateLimit struct {
+	Key LimitKey
+	Val LimitValue
 }
 
 // LimitKey defines the limited API's key.

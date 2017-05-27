@@ -33,7 +33,8 @@ func main() {
 
 ## Features
 
-1. Rate-limit by request's remote IP, path, methods, custom headers, & basic auth usernames.
+1. Rate-limit by request's remote IP, path, methods, custom headers, & basic auth usernames.  
+Register API limit for the specified `path` and `method` using regexp.
     ```go
     limiter := tollbooth.NewLimiter(1, time.Second)
 
@@ -52,6 +53,9 @@ func main() {
     // Limit based on basic auth usernames.
     // Typically, you prefetched these values from the database.
     limiter.BasicAuthUsers = []string{"bob", "joe", "wallstreetcn"}
+
+    // Rate-Limit the expensive API with 1 ops/min.
+    tollbooth.RegisterAPI("/some-expensive-api", "POST", 1, time.Minute)
     ```
 
 2. Each request handler can be rate-limited individually.
