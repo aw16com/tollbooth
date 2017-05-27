@@ -25,16 +25,16 @@ func TestLimitReached(t *testing.T) {
 	limiter := NewLimiter(1, time.Second)
 	key := "127.0.0.1|/"
 
-	if limiter.LimitReached(key) == true {
+	if limiter.LimitReached(key, nil) == true {
 		t.Error("First time count should not reached the limit.")
 	}
 
-	if limiter.LimitReached(key) == false {
+	if limiter.LimitReached(key, nil) == false {
 		t.Error("Second time count should return true because it exceeds 1 request per second.")
 	}
 
 	<-time.After(1 * time.Second)
-	if limiter.LimitReached(key) == true {
+	if limiter.LimitReached(key, nil) == true {
 		t.Error("Third time count should not reached the limit because the 1 second window has passed.")
 	}
 }
@@ -45,12 +45,12 @@ func TestMuchHigherMaxRequests(t *testing.T) {
 	key := "127.0.0.1|/"
 
 	for i := 0; i < numRequests; i++ {
-		if limiter.LimitReached(key) == true {
+		if limiter.LimitReached(key, nil) == true {
 			t.Errorf("N(%v) limit should not be reached.", i)
 		}
 	}
 
-	if limiter.LimitReached(key) == false {
+	if limiter.LimitReached(key, nil) == false {
 		t.Errorf("N(%v) limit should be reached because it exceeds %v request per second.", numRequests+2, numRequests)
 	}
 
