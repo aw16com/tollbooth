@@ -47,8 +47,7 @@ func main() {
 
     // Limit request headers containing certain values.
     // Typically, you prefetched these values from the database.
-    limiter.Headers = make(map[string][]string)
-    limiter.Headers["X-Access-Token"] = []string{"abc123", "xyz098"}
+    limiter.Headers = []string{"X-Access-Token"}
 
     // Limit based on basic auth usernames.
     // Typically, you prefetched these values from the database.
