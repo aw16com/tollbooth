@@ -13,18 +13,18 @@ import (
 func TestLimitByKeys(t *testing.T) {
 	limiter := NewLimiter(1, time.Second) // Only 1 request per second is allowed.
 
-	httperror := LimitByKeys(limiter, []string{"127.0.0.1", "/"})
+	httperror := LimitByKeys(limiter, []string{"127.0.0.1", "/"}, nil)
 	if httperror != nil {
 		t.Errorf("First time count should not return error. Error: %v", httperror.Error())
 	}
 
-	httperror = LimitByKeys(limiter, []string{"127.0.0.1", "/"})
+	httperror = LimitByKeys(limiter, []string{"127.0.0.1", "/"}, nil)
 	if httperror == nil {
 		t.Errorf("Second time count should return error because it exceeds 1 request per second.")
 	}
 
 	<-time.After(1 * time.Second)
-	httperror = LimitByKeys(limiter, []string{"127.0.0.1", "/"})
+	httperror = LimitByKeys(limiter, []string{"127.0.0.1", "/"}, nil)
 	if httperror != nil {
 		t.Errorf("Third time count should not return error because the 1 second window has passed.")
 	}
@@ -293,5 +293,58 @@ func TestLimitHandler(t *testing.T) {
 	//Should be limited
 	if status := rr.Code; status != http.StatusTooManyRequests {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusTooManyRequests)
+	}
+}
+
+func TestLimitHandlerAndSetExactAPIRateLimit(t *testing.T) {
+	limiter := config.NewLimiter(1, time.Second)
+	limiter.IPLookups = []string{"X-Real-IP", "RemoteAddr", "X-Forwarded-For"}
+	limiter.Methods = []string{"POST"}
+
+	RegisterAPI("/matters", "POST", 2, time.Second)
+
+	handler := LimitHandler(limiter, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`hello world`))
+	}))
+
+	req, err := http.NewRequest("POST", "/doesntmatter", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req.Header.Set("X-Real-IP", "2601:7:1c82:4097:59a0:a80b:2841:b8c8")
+
+	req2, err := http.NewRequest("POST", "/matters", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req2.Header.Set("X-Real-IP", "2601:7:1c82:4097:59a0:a80b:2841:b8c8")
+
+	rr := httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+	// Should not be limited
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	rr = httptest.NewRecorder()
+	handler.ServeHTTP(rr, req)
+	//Should be limited
+	if status := rr.Code; status != http.StatusTooManyRequests {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusTooManyRequests)
+	}
+
+	rr = httptest.NewRecorder()
+	handler.ServeHTTP(rr, req2)
+	// Should not be limited
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	rr = httptest.NewRecorder()
+	handler.ServeHTTP(rr, req2)
+	// Should not be limited
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 	}
 }

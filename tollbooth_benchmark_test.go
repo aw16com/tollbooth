@@ -12,7 +12,7 @@ func BenchmarkLimitByKeys(b *testing.B) {
 	limiter := NewLimiter(1, time.Second) // Only 1 request per second is allowed.
 
 	for i := 0; i < b.N; i++ {
-		LimitByKeys(limiter, []string{"127.0.0.1", "/"})
+		LimitByKeys(limiter, []string{"127.0.0.1", "/"}, nil)
 	}
 }
 

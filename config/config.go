@@ -56,15 +56,37 @@ type Limiter struct {
 	// Throttler struct
 	tokenBuckets map[string]*rate.Limiter
 
+	settings map[LimitKey]LimitValue
+
 	sync.RWMutex
 }
 
+// LimitKey defines the limited API's key.
+type LimitKey struct {
+	Path   string
+	Method string
+}
+
+// LimitValue defines the API's rate limit.
+type LimitValue struct {
+	Max int64
+	TTL time.Duration
+}
+
 // LimitReached returns a bool indicating if the Bucket identified by key ran out of tokens.
-func (l *Limiter) LimitReached(key string) bool {
+func (l *Limiter) LimitReached(key string, limitVal *LimitValue) bool {
 	l.Lock()
 	defer l.Unlock()
 	if _, found := l.tokenBuckets[key]; !found {
-		l.tokenBuckets[key] = rate.NewLimiter(rate.Every(l.TTL), int(l.Max))
+		var (
+			TTL = l.TTL
+			Max = l.Max
+		)
+		if limitVal != nil {
+			TTL = limitVal.TTL
+			Max = limitVal.Max
+		}
+		l.tokenBuckets[key] = rate.NewLimiter(rate.Every(TTL), int(Max))
 	}
 
 	return !l.tokenBuckets[key].AllowN(time.Now(), 1)

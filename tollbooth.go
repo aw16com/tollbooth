@@ -12,6 +12,14 @@ import (
 	"github.com/wallstreetcn/tollbooth/libstring"
 )
 
+var (
+	settings map[config.LimitKey]config.LimitValue
+)
+
+func init() {
+	settings = make(map[config.LimitKey]config.LimitValue)
+}
+
 // NewLimiter is a convenience function to config.NewLimiter.
 func NewLimiter(max int64, ttl time.Duration) *config.Limiter {
 	return config.NewLimiter(max, ttl)
@@ -19,8 +27,8 @@ func NewLimiter(max int64, ttl time.Duration) *config.Limiter {
 
 // LimitByKeys keeps track number of request made by keys separated by pipe.
 // It returns HTTPError when limit is exceeded.
-func LimitByKeys(limiter *config.Limiter, keys []string) *errors.HTTPError {
-	if limiter.LimitReached(strings.Join(keys, "|")) {
+func LimitByKeys(limiter *config.Limiter, keys []string, limitVal *config.LimitValue) *errors.HTTPError {
+	if limiter.LimitReached(strings.Join(keys, "|"), limitVal) {
 		return &errors.HTTPError{Message: limiter.Message, StatusCode: limiter.StatusCode}
 	}
 
@@ -34,7 +42,7 @@ func LimitByRequest(limiter *config.Limiter, r *http.Request) *errors.HTTPError 
 
 	// Loop sliceKeys and check if one of them has error.
 	for _, keys := range sliceKeys {
-		httpError := LimitByKeys(limiter, keys)
+		httpError := LimitByKeys(limiter, keys, matchLimit(r))
 		if httpError != nil {
 			return httpError
 		}
@@ -113,7 +121,7 @@ func BuildKeys(limiter *config.Limiter, r *http.Request) [][]string {
 	return sliceKeys
 }
 
-// SetResponseHeaders configures X-Rate-Limit-Limit and X-Rate-Limit-Duration
+// SetResponseHeaders configures X-Rate-Limit-Limit and X-Rate-Limit-Duration.
 func SetResponseHeaders(limiter *config.Limiter, w http.ResponseWriter) {
 	w.Header().Add("X-Rate-Limit-Limit", strconv.FormatInt(limiter.Max, 10))
 	w.Header().Add("X-Rate-Limit-Duration", limiter.TTL.String())
@@ -137,6 +145,21 @@ func LimitHandler(limiter *config.Limiter, next http.Handler) http.Handler {
 	}
 
 	return http.HandlerFunc(middle)
+}
+
+// RegisterAPI registers rate limit for the specified API.
+func RegisterAPI(path string, method string, max int64, duration time.Duration) {
+	key := config.LimitKey{Path: path, Method: method}
+	settings[key] = config.LimitValue{Max: max, TTL: duration}
+}
+
+func matchLimit(r *http.Request) *config.LimitValue {
+	path := r.URL.Path
+	method := r.Method
+	if v, ok := settings[config.LimitKey{Path: path, Method: method}]; ok {
+		return &v
+	}
+	return nil
 }
 
 // LimitFuncHandler is a middleware that performs rate-limiting given request handler function.
