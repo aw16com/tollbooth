@@ -10,6 +10,6 @@ func BenchmarkLimitReached(b *testing.B) {
 	key := "127.0.0.1|/"
 
 	for i := 0; i < b.N; i++ {
-		limiter.LimitReached(key)
+		limiter.LimitReached(key, nil)
 	}
 }
