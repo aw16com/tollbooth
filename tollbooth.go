@@ -3,6 +3,7 @@ package tollbooth
 
 import (
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -13,11 +14,11 @@ import (
 )
 
 var (
-	settings map[config.LimitKey]config.LimitValue
+	settings []config.RateLimit
 )
 
 func init() {
-	settings = make(map[config.LimitKey]config.LimitValue)
+	settings = make([]config.RateLimit, 0)
 }
 
 // NewLimiter is a convenience function to config.NewLimiter.
@@ -149,15 +150,37 @@ func LimitHandler(limiter *config.Limiter, next http.Handler) http.Handler {
 
 // RegisterAPI registers rate limit for the specified API.
 func RegisterAPI(path string, method string, max int64, duration time.Duration) {
-	key := config.LimitKey{Path: path, Method: method}
-	settings[key] = config.LimitValue{Max: max, TTL: duration}
+	settings = append(settings, config.RateLimit{
+		Key: config.LimitKey{
+			Path:   path,
+			Method: method,
+		},
+		Val: config.LimitValue{
+			Max: max,
+			TTL: duration,
+		},
+	})
+
+	config.By(func(l1, l2 *config.RateLimit) bool {
+		return len(l1.Key.Path) > len(l2.Key.Path)
+	}).Sort(settings)
+}
+
+// Reset resets the rate limit settings.
+func Reset() {
+	settings = make([]config.RateLimit, 0)
 }
 
 func matchLimit(r *http.Request) *config.LimitValue {
 	path := r.URL.Path
 	method := r.Method
-	if v, ok := settings[config.LimitKey{Path: path, Method: method}]; ok {
-		return &v
+	for i, ratelimit := range settings {
+		if ratelimit.Key.Method == method {
+			matched, _ := regexp.MatchString(ratelimit.Key.Path, path)
+			if matched {
+				return &settings[i].Val
+			}
+		}
 	}
 	return nil
 }
