@@ -347,4 +347,11 @@ func TestLimitHandlerAndSetExactAPIRateLimit(t *testing.T) {
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 	}
+
+	rr = httptest.NewRecorder()
+	handler.ServeHTTP(rr, req2)
+	// Should not be limited
+	if status := rr.Code; status != http.StatusTooManyRequests {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusTooManyRequests)
+	}
 }
