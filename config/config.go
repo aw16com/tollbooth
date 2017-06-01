@@ -6,7 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"golang.org/x/time/rate"
+	// "golang.org/x/time/rate"
+	rate "github.com/wallstreetcn/rate/redis"
 )
 
 // NewLimiter is a constructor for Limiter.
@@ -120,7 +121,7 @@ func (l *Limiter) LimitReached(key string, limitVal *LimitValue) bool {
 			TTL = limitVal.TTL
 			Max = limitVal.Max
 		}
-		l.tokenBuckets[key] = rate.NewLimiter(rate.Every(TTL), int(Max))
+		l.tokenBuckets[key] = rate.NewLimiter(rate.Every(TTL), int(Max), key)
 	}
 
 	return !l.tokenBuckets[key].AllowN(time.Now(), 1)

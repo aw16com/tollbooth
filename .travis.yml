@@ -1,6 +1,6 @@
 sudo: required
 services:
-  - docker
+  - redis-server
 
 language: go
 

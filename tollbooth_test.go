@@ -3,14 +3,36 @@ package tollbooth
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 	"time"
 
+	rate "github.com/wallstreetcn/rate/redis"
 	"github.com/wallstreetcn/tollbooth/config"
 )
 
+func setup() {
+	rate.SetRedis(&rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
+}
+
+func teardown() {
+}
+
+func TestMain(m *testing.M) {
+	setup()
+	retCode := m.Run()
+	teardown()
+	os.Exit(retCode)
+}
+
 func TestLimitByKeys(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := NewLimiter(1, time.Second) // Only 1 request per second is allowed.
 
 	httperror := LimitByKeys(limiter, []string{"127.0.0.1", "/"}, nil)
@@ -31,6 +53,8 @@ func TestLimitByKeys(t *testing.T) {
 }
 
 func TestDefaultBuildKeys(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := NewLimiter(1, time.Second)
 	limiter.IPLookups = []string{"X-Forwarded-For", "X-Real-IP", "RemoteAddr"}
 
@@ -59,6 +83,8 @@ func TestDefaultBuildKeys(t *testing.T) {
 }
 
 func TestBasicAuthBuildKeys(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := NewLimiter(1, time.Second)
 	limiter.BasicAuthUsers = []string{"bro"}
 
@@ -90,6 +116,8 @@ func TestBasicAuthBuildKeys(t *testing.T) {
 }
 
 func TestCustomHeadersBuildKeys(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := NewLimiter(1, time.Second)
 	limiter.Headers = []string{"X-Auth-Token"}
 
@@ -123,6 +151,8 @@ func TestCustomHeadersBuildKeys(t *testing.T) {
 }
 
 func TestRequestMethodBuildKeys(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := NewLimiter(1, time.Second)
 	limiter.Methods = []string{"GET"}
 
@@ -152,6 +182,8 @@ func TestRequestMethodBuildKeys(t *testing.T) {
 }
 
 func TestRequestMethodAndCustomHeadersBuildKeys(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := NewLimiter(1, time.Second)
 	limiter.Methods = []string{"GET"}
 	limiter.Headers = []string{"X-Auth-Token"}
@@ -189,6 +221,8 @@ func TestRequestMethodAndCustomHeadersBuildKeys(t *testing.T) {
 }
 
 func TestRequestMethodAndBasicAuthUsersBuildKeys(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := NewLimiter(1, time.Second)
 	limiter.Methods = []string{"GET"}
 	limiter.BasicAuthUsers = []string{"bro"}
@@ -223,6 +257,8 @@ func TestRequestMethodAndBasicAuthUsersBuildKeys(t *testing.T) {
 }
 
 func TestRequestMethodCustomHeadersAndBasicAuthUsersBuildKeys(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := NewLimiter(1, time.Second)
 	limiter.Methods = []string{"GET"}
 	limiter.Headers = []string{"X-Auth-Token"}
@@ -266,6 +302,8 @@ func TestRequestMethodCustomHeadersAndBasicAuthUsersBuildKeys(t *testing.T) {
 }
 
 func TestLimitHandler(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := config.NewLimiter(1, time.Second)
 	limiter.IPLookups = []string{"X-Real-IP", "RemoteAddr", "X-Forwarded-For"}
 	limiter.Methods = []string{"POST"}
@@ -297,6 +335,8 @@ func TestLimitHandler(t *testing.T) {
 }
 
 func TestLimitHandlerAndSetExactAPIRateLimit(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := config.NewLimiter(1, time.Second)
 	limiter.IPLookups = []string{"X-Real-IP", "RemoteAddr", "X-Forwarded-For"}
 	limiter.Methods = []string{"POST"}
@@ -354,6 +394,8 @@ func TestLimitHandlerAndSetExactAPIRateLimit(t *testing.T) {
 }
 
 func TestLimitHandlerAndSetRegexpAPIRateLimit(t *testing.T) {
+	rate.Client().FlushAll()
+
 	limiter := config.NewLimiter(1, time.Second)
 	limiter.IPLookups = []string{"X-Real-IP", "RemoteAddr", "X-Forwarded-For"}
 	limiter.Methods = []string{"POST"}

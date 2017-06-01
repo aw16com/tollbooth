@@ -1,9 +1,30 @@
 package config
 
 import (
+	"os"
 	"testing"
 	"time"
+
+	rate "github.com/wallstreetcn/rate/redis"
 )
+
+func setup() {
+	rate.SetRedis(&rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
+}
+
+func teardown() {
+}
+
+func TestMain(m *testing.M) {
+	setup()
+	retCode := m.Run()
+	teardown()
+	os.Exit(retCode)
+}
 
 func TestConstructor(t *testing.T) {
 	limiter := NewLimiter(1, time.Second)
@@ -23,7 +44,7 @@ func TestConstructor(t *testing.T) {
 
 func TestLimitReached(t *testing.T) {
 	limiter := NewLimiter(1, time.Second)
-	key := "127.0.0.1|/"
+	key := "TestLimitReached"
 
 	if limiter.LimitReached(key, nil) == true {
 		t.Error("First time count should not reached the limit.")
@@ -40,9 +61,9 @@ func TestLimitReached(t *testing.T) {
 }
 
 func TestMuchHigherMaxRequests(t *testing.T) {
-	numRequests := 1000
-	limiter := NewLimiter(int64(numRequests), time.Second)
-	key := "127.0.0.1|/"
+	numRequests := 500
+	limiter := NewLimiter(int64(numRequests), time.Second/time.Duration(numRequests))
+	key := "TestMuchHigherMaxRequests"
 
 	for i := 0; i < numRequests; i++ {
 		if limiter.LimitReached(key, nil) == true {
