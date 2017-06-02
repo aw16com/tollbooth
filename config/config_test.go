@@ -1,33 +1,18 @@
 package config
 
 import (
-	"os"
 	"testing"
 	"time"
 
 	rate "github.com/wallstreetcn/rate/redis"
 )
 
-func setup() {
-	rate.SetRedis(&rate.ConfigRedis{
+func TestConstructor(t *testing.T) {
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
 		Host: "127.0.0.1",
 		Port: 6379,
 		Auth: "",
 	})
-}
-
-func teardown() {
-}
-
-func TestMain(m *testing.M) {
-	setup()
-	retCode := m.Run()
-	teardown()
-	os.Exit(retCode)
-}
-
-func TestConstructor(t *testing.T) {
-	limiter := NewLimiter(1, time.Second)
 	if limiter.Max != 1 {
 		t.Errorf("Max field is incorrect. Value: %v", limiter.Max)
 	}
@@ -43,7 +28,11 @@ func TestConstructor(t *testing.T) {
 }
 
 func TestLimitReached(t *testing.T) {
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	key := "TestLimitReached"
 
 	if limiter.LimitReached(key, nil) == true {
@@ -62,7 +51,11 @@ func TestLimitReached(t *testing.T) {
 
 func TestMuchHigherMaxRequests(t *testing.T) {
 	numRequests := 500
-	limiter := NewLimiter(int64(numRequests), time.Second/time.Duration(numRequests))
+	limiter := NewLimiter(int64(numRequests), time.Second/time.Duration(numRequests), &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	key := "TestMuchHigherMaxRequests"
 
 	for i := 0; i < numRequests; i++ {

@@ -33,7 +33,11 @@ func TestMain(m *testing.M) {
 func TestLimitByKeys(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := NewLimiter(1, time.Second) // Only 1 request per second is allowed.
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	}) // Only 1 request per second is allowed.
 
 	httperror := LimitByKeys(limiter, []string{"127.0.0.1", "/"}, nil)
 	if httperror != nil {
@@ -55,7 +59,11 @@ func TestLimitByKeys(t *testing.T) {
 func TestDefaultBuildKeys(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.IPLookups = []string{"X-Forwarded-For", "X-Real-IP", "RemoteAddr"}
 
 	request, err := http.NewRequest("GET", "/", strings.NewReader("Hello, world!"))
@@ -85,7 +93,11 @@ func TestDefaultBuildKeys(t *testing.T) {
 func TestBasicAuthBuildKeys(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.BasicAuthUsers = []string{"bro"}
 
 	request, err := http.NewRequest("GET", "/", strings.NewReader("Hello, world!"))
@@ -118,7 +130,11 @@ func TestBasicAuthBuildKeys(t *testing.T) {
 func TestCustomHeadersBuildKeys(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.Headers = []string{"X-Auth-Token"}
 
 	request, err := http.NewRequest("GET", "/", strings.NewReader("Hello, world!"))
@@ -153,7 +169,11 @@ func TestCustomHeadersBuildKeys(t *testing.T) {
 func TestRequestMethodBuildKeys(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.Methods = []string{"GET"}
 
 	request, err := http.NewRequest("GET", "/", strings.NewReader("Hello, world!"))
@@ -184,7 +204,11 @@ func TestRequestMethodBuildKeys(t *testing.T) {
 func TestRequestMethodAndCustomHeadersBuildKeys(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.Methods = []string{"GET"}
 	limiter.Headers = []string{"X-Auth-Token"}
 
@@ -223,7 +247,11 @@ func TestRequestMethodAndCustomHeadersBuildKeys(t *testing.T) {
 func TestRequestMethodAndBasicAuthUsersBuildKeys(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.Methods = []string{"GET"}
 	limiter.BasicAuthUsers = []string{"bro"}
 
@@ -259,7 +287,11 @@ func TestRequestMethodAndBasicAuthUsersBuildKeys(t *testing.T) {
 func TestRequestMethodCustomHeadersAndBasicAuthUsersBuildKeys(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.Methods = []string{"GET"}
 	limiter.Headers = []string{"X-Auth-Token"}
 	limiter.BasicAuthUsers = []string{"bro"}
@@ -304,7 +336,11 @@ func TestRequestMethodCustomHeadersAndBasicAuthUsersBuildKeys(t *testing.T) {
 func TestLimitHandler(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := config.NewLimiter(1, time.Second)
+	limiter := config.NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.IPLookups = []string{"X-Real-IP", "RemoteAddr", "X-Forwarded-For"}
 	limiter.Methods = []string{"POST"}
 
@@ -337,7 +373,11 @@ func TestLimitHandler(t *testing.T) {
 func TestLimitHandlerAndSetExactAPIRateLimit(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := config.NewLimiter(1, time.Second)
+	limiter := config.NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.IPLookups = []string{"X-Real-IP", "RemoteAddr", "X-Forwarded-For"}
 	limiter.Methods = []string{"POST"}
 
@@ -396,7 +436,11 @@ func TestLimitHandlerAndSetExactAPIRateLimit(t *testing.T) {
 func TestLimitHandlerAndSetRegexpAPIRateLimit(t *testing.T) {
 	rate.Client().FlushAll()
 
-	limiter := config.NewLimiter(1, time.Second)
+	limiter := config.NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.IPLookups = []string{"X-Real-IP", "RemoteAddr", "X-Forwarded-For"}
 	limiter.Methods = []string{"POST"}
 

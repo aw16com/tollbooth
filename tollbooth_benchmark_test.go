@@ -6,10 +6,16 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	rate "github.com/wallstreetcn/rate/redis"
 )
 
 func BenchmarkLimitByKeys(b *testing.B) {
-	limiter := NewLimiter(1, time.Second) // Only 1 request per second is allowed.
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	}) // Only 1 request per second is allowed.
 
 	for i := 0; i < b.N; i++ {
 		LimitByKeys(limiter, []string{"127.0.0.1", "/"}, nil)
@@ -17,7 +23,11 @@ func BenchmarkLimitByKeys(b *testing.B) {
 }
 
 func BenchmarkBuildKeys(b *testing.B) {
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.IPLookups = []string{"X-Real-IP", "RemoteAddr", "X-Forwarded-For"}
 	limiter.Headers = make([]string, 0)
 	limiter.Headers = append(limiter.Headers, "X-Real-IP")
@@ -37,7 +47,11 @@ func BenchmarkBuildKeys(b *testing.B) {
 }
 
 func BenchmarkBuildKeysWithLongKey(b *testing.B) {
-	limiter := NewLimiter(1, time.Second)
+	limiter := NewLimiter(1, time.Second, &rate.ConfigRedis{
+		Host: "127.0.0.1",
+		Port: 6379,
+		Auth: "",
+	})
 	limiter.IPLookups = []string{"X-Real-IP", "X-Forwarded-For", "RemoteAddr"}
 	limiter.Headers = []string{"X-Auth-Token"}
 

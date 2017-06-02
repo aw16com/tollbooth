@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	rate "github.com/wallstreetcn/rate/redis"
 	"github.com/wallstreetcn/tollbooth/config"
 	"github.com/wallstreetcn/tollbooth/errors"
 	"github.com/wallstreetcn/tollbooth/libstring"
@@ -22,8 +23,8 @@ func init() {
 }
 
 // NewLimiter is a convenience function to config.NewLimiter.
-func NewLimiter(max int64, ttl time.Duration) *config.Limiter {
-	return config.NewLimiter(max, ttl)
+func NewLimiter(max int64, ttl time.Duration, conf *rate.ConfigRedis) *config.Limiter {
+	return config.NewLimiter(max, ttl, conf)
 }
 
 // LimitByKeys keeps track number of request made by keys separated by pipe.

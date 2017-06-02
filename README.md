@@ -66,6 +66,17 @@ Register API limit for the specified `path` and `method` using regexp.
 
 4. Tollbooth does not require external storage since it uses an algorithm called [Token Bucket](http://en.wikipedia.org/wiki/Token_bucket) [(Go library: golang.org/x/time/rate)](//godoc.org/golang.org/x/time/rate).
 
+## Benchmark
+Use single redis on MacBook Pro (Retina, 13-inch, Late 2013), CPU 2.4 GHz Intel Core i5, Memory 8 GB 1600 MHz DDR3.
+
+```shell
+$ go test -bench=.                                                                                                                                  ⬡ 4.4.5 [±master ●]
+BenchmarkLimitByKeys-4                     20000            143600 ns/op
+BenchmarkBuildKeys-4                     2000000               735 ns/op
+BenchmarkBuildKeysWithLongKey-4          2000000               634 ns/op
+PASS
+ok      github.com/wallstreetcn/tollbooth       9.024s
+```
 
 # Other Web Frameworks
 

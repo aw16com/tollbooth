@@ -2,22 +2,26 @@
 package config
 
 import (
+	"log"
 	"sort"
 	"sync"
 	"time"
 
-	// "golang.org/x/time/rate"
 	rate "github.com/wallstreetcn/rate/redis"
 )
 
 // NewLimiter is a constructor for Limiter.
-func NewLimiter(max int64, ttl time.Duration) *Limiter {
+func NewLimiter(max int64, ttl time.Duration, conf *rate.ConfigRedis) *Limiter {
 	limiter := &Limiter{Max: max, TTL: ttl}
 	limiter.MessageContentType = "text/plain; charset=utf-8"
 	limiter.Message = "You have reached maximum request limit."
 	limiter.StatusCode = 429
 	limiter.tokenBuckets = make(map[string]*rate.Limiter)
 	limiter.IPLookups = []string{"RemoteAddr", "X-Forwarded-For", "X-Real-IP"}
+
+	if err := rate.SetRedis(conf); err != nil {
+		log.Println("fail to set rate limiter's redis: ", err)
+	}
 
 	return limiter
 }
