@@ -11,6 +11,8 @@ This is a generic middleware to rate-limit HTTP requests.
 
 
 ## Five Minutes Tutorial
+`TTL` is the interval when emiting a token.  
+`max` is the capacity of the token bucket, generally larger than time.Second/TTL.
 ```go
 package main
 
