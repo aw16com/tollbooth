@@ -44,6 +44,11 @@ func RemoteIP(ipLookups []string, r *http.Request) string {
 		if lookup == "X-Real-IP" && realIP != "" {
 			return realIP
 		}
+
+		// add other identifiers when other token is present.
+		if token := r.Header.Get(lookup); token != "" {
+			return strings.TrimSpace(token)
+		}
 	}
 
 	return ""
