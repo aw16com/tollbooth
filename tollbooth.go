@@ -18,10 +18,6 @@ var (
 	settings []config.RateLimit
 )
 
-func init() {
-	settings = make([]config.RateLimit, 0)
-}
-
 // NewLimiter is a convenience function to config.NewLimiter.
 func NewLimiter(max int64, ttl time.Duration, conf *rate.ConfigRedis) *config.Limiter {
 	return config.NewLimiter(max, ttl, conf)

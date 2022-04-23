@@ -18,6 +18,7 @@ func setup() {
 		Port: 6379,
 		Auth: "",
 	})
+
 }
 
 func teardown() {

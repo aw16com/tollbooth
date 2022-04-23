@@ -1,9 +1,15 @@
-package echo
+package thirdparty
 
 import (
+	"fmt"
 	"github.com/aw16com/tollbooth"
 	"github.com/aw16com/tollbooth/config"
 )
+
+func init() {
+	e := echo.New()
+	fmt.Println(e)
+}
 
 // LimitMiddleware builds an API limit middleware for labstack echo framework
 func LimitMiddleware(limiter *config.Limiter) echo.MiddlewareFunc {
