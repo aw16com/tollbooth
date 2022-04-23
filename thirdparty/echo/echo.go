@@ -3,7 +3,6 @@ package echo
 import (
 	"github.com/aw16com/tollbooth"
 	"github.com/aw16com/tollbooth/config"
-	"github.com/labstack/echo"
 )
 
 // LimitMiddleware builds an API limit middleware for labstack echo framework
