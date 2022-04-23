@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	rate "github.com/wallstreetcn/rate/redis"
+	rate "github.com/aw16com/rate/redis"
 )
 
 // NewLimiter is a constructor for Limiter.

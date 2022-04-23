@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	"github.com/wallstreetcn/tollbooth"
-	tollbooth_echo "github.com/wallstreetcn/tollbooth/thirdparty/echo"
+	"github.com/aw16com/tollbooth"
+	tollbooth_echo "github.com/aw16com/tollbooth/thirdparty/echo"
 )
 
 func main() {

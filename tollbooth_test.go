@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	rate "github.com/wallstreetcn/rate/redis"
-	"github.com/wallstreetcn/tollbooth/config"
+	rate "github.com/aw16com/rate/redis"
+	"github.com/aw16com/tollbooth/config"
 )
 
 func setup() {

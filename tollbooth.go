@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	rate "github.com/wallstreetcn/rate/redis"
-	"github.com/wallstreetcn/tollbooth/config"
-	"github.com/wallstreetcn/tollbooth/errors"
-	"github.com/wallstreetcn/tollbooth/libstring"
+	rate "github.com/aw16com/rate/redis"
+	"github.com/aw16com/tollbooth/config"
+	"github.com/aw16com/tollbooth/errors"
+	"github.com/aw16com/tollbooth/libstring"
 )
 
 var (

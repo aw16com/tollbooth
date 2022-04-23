@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	rate "github.com/wallstreetcn/rate/redis"
+	rate "github.com/aw16com/rate/redis"
 )
 
 func BenchmarkLimitByKeys(b *testing.B) {
